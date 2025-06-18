@@ -15,21 +15,21 @@ export const selectors = {
         forgotPasswordLink: 'a[href*="forgotten/password"]'
     },
     
-    // Produkty
+    // Produkty - zaktualizowane selektory
     products: {
-        productCard: '.product-list',
+        productCard: '.product-list .product-item',
         productName: '.productname',
         productPrice: '.price',
         addToCartButton: '.productcart',
         addToWishlistButton: '.wishlist'
     },
     
-    // Koszyk
+    // Koszyk - zaktualizowane selektory
     cart: {
         cartItems: '.product-list',
-        quantityInput: '.input-group input',
-        updateButton: '.input-group-btn button',
-        removeButton: '.product-list .remove',
+        quantityInput: 'input[name="quantity"]',
+        updateButton: 'button[title="Update"]',
+        removeButton: 'a[title="Remove"]',
         checkoutButton: '#cart_checkout1'
     },
     

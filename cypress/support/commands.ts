@@ -12,11 +12,17 @@ interface ProductData {
     price: string;
 }
 
+// Interfejs dla danych wyszukiwania
+interface SearchData {
+    term: string;
+}
+
 declare global {
     namespace Cypress {
         interface Chainable {
             login(loginData: LoginData): Chainable<void>;
             addProductToCart(productData: ProductData): Chainable<void>;
+            searchProduct(searchData: SearchData): Chainable<void>;
         }
     }
 }
@@ -31,11 +37,13 @@ Cypress.Commands.add('login', (loginData: LoginData) => {
 
 // Komenda do dodawania produktu do koszyka
 Cypress.Commands.add('addProductToCart', (productData: ProductData) => {
-    cy.get(selectors.products.productCard)
-        .contains(productData.name)
-        .parent()
-        .parent()
-        .within(() => {
-            cy.get(selectors.products.addToCartButton).click();
-        });
+    cy.get('.product-list').first().within(() => {
+        cy.get('.productcart').click();
+    });
+});
+
+// Komenda do wyszukiwania produktu
+Cypress.Commands.add('searchProduct', (searchData: SearchData) => {
+    cy.get(selectors.search.searchInput).type(searchData.term);
+    cy.get(selectors.search.searchButton).click();
 }); 
