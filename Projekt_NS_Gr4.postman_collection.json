@@ -1,0 +1,236 @@
+{
+	"info": {
+		"_postman_id": "13c3d526-8c3e-4a9e-a3cc-aa52c3ad870b",
+		"name": "Projekt_NS_Gr4",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5560222"
+	},
+	"item": [
+		{
+			"name": "Get all Boards",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{trelloUrl}}/members/me/boards",
+					"host": [
+						"{{trelloUrl}}"
+					],
+					"path": [
+						"members",
+						"me",
+						"boards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Board",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.sendRequest({\r",
+							"    url: `${pm.collectionVariables.get(\"trelloUrl\")}/members/me/boards?key=${pm.globals.get(\"trelloKey\")}&token=${pm.globals.get(\"trelloToken\")}`,\r",
+							"    method: 'GET'\r",
+							"}, (err, res) => {\r",
+							"    res.json().forEach(board => {\r",
+							"        pm.sendRequest({\r",
+							"            url: `${pm.collectionVariables.get(\"trelloUrl\")}/boards/${board.id}?key=${pm.globals.get(\"trelloKey\")}&token=${pm.globals.get(\"trelloToken\")}`,\r",
+							"            method: 'DELETE'\r",
+							"        })\r",
+							"    })\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"boardId\", pm.response.json().id)\r",
+							"\r",
+							"pm.test(\"Czy zwrócone status = 200\", () => {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Czy zwrócone dane sa poprawne\", () => {\r",
+							"    pm.expect(pm.response.json().name).to.equal(\"Nazwa mojego boardu\")\r",
+							"    pm.expect(pm.response.json().desc).to.equal(\"Opis mojego boardu\")\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{trelloUrl}}/boards/?name=Nazwa mojego boardu&desc=Opis mojego boardu",
+					"host": [
+						"{{trelloUrl}}"
+					],
+					"path": [
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Nazwa mojego boardu"
+						},
+						{
+							"key": "desc",
+							"value": "Opis mojego boardu"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Board without Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Czy zwracane dane są ok\", () => {\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.response.to.have.status(\"Bad Request\");\r",
+							"\r",
+							"    pm.expect(pm.response.code).to.equal(400);\r",
+							"    pm.expect(pm.response.status).to.equal(\"Bad Request\");\r",
+							"    pm.expect(pm.response.json().message).to.equal(\"invalid value for name\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{trelloUrl}}/boards/",
+					"host": [
+						"{{trelloUrl}}"
+					],
+					"path": [
+						"boards",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const randomId = Math.floor(Math.random() * (10000 - 1) + 1);\r",
+							"\r",
+							"pm.collectionVariables.set(\"boardName\", `Moja tablic ${randomId}`);\r",
+							"pm.collectionVariables.set(\"boardDesc\", `Mój Opis tablicy ${randomId}`);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{trelloUrl}}/boards/{{boardId}}?name={{boardName}}&desc={{boardDesc}}&closed=true",
+					"host": [
+						"{{trelloUrl}}"
+					],
+					"path": [
+						"boards",
+						"{{boardId}}"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{boardName}}"
+						},
+						{
+							"key": "desc",
+							"value": "{{boardDesc}}"
+						},
+						{
+							"key": "closed",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.request.addQueryParams([\r",
+					"    { key: 'key', value: pm.globals.get(\"trelloKey\") },\r",
+					"    { key: 'token', value: pm.globals.get(\"trelloToken\") },\r",
+					"])"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "trelloUrl",
+			"value": "https://api.trello.com/1",
+			"type": "string"
+		},
+		{
+			"key": "incorrectId",
+			"value": "000e0e0000ee000ee000ee00",
+			"type": "string"
+		},
+		{
+			"key": "invalidId",
+			"value": "8c8trvp3n8",
+			"type": "string"
+		},
+		{
+			"key": "boardId",
+			"value": ""
+		},
+		{
+			"key": "boardName",
+			"value": ""
+		},
+		{
+			"key": "boardDesc",
+			"value": ""
+		}
+	]
+}

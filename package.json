@@ -1,0 +1,14 @@
+{
+  "name": "cypress-automation-test-store",
+  "version": "1.0.0",
+  "description": "Projekt testowy Cypress dla automationteststore.com",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:headless": "cypress run --headless"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.0",
+    "typescript": "^5.3.3"
+  }
+} 
